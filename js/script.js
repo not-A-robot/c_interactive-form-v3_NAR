@@ -1,5 +1,10 @@
 /***********************************
-* BASIC FORM ELEMENT REFERENCES 
+* Treehouse Techdegree: FSJS Project 3 - Interactive Form
+* Submitted 11/13/2024 By Jeff Delacruz username NotARobot
+***********************************/
+
+/***********************************
+* Form Variables 
 ***********************************/
 const form = document.querySelector('form')
 
@@ -34,9 +39,6 @@ const regexCreditCardNumber = /^\d{13,16}$/;
 const regexCreditCardZip = /^\d{5}(-\d{4})?$/;
 const regexCreditCardCvv = /^\d{3}$/;
 
-
-
-
 /***********************************
 * Loading Events 
 ***********************************/
@@ -44,13 +46,7 @@ const regexCreditCardCvv = /^\d{3}$/;
 name.focus() //start with focus on name input
 jobRoleOther.hidden = true; // start with job roles hidden
 shirtColor.disabled = true; // start with shirt colors disabled until design picked
-
-//set starting payment option to 'credit-card'
-for ( let i = 0; i < paymentOption.length; i++ ){
-    if(paymentOption[i].value == 'credit-card'){
-        paymentOption[i].selected = true;
-    }
-};
+paymentOption.value = 'credit-card' // start with credit-card option
 paymentOptionTest('credit-card'); //hide other payment options choices
 
 /***********************************
@@ -72,7 +68,7 @@ jobRoleSelect.addEventListener('change', (e)=> {
 
 //If design input is picked, reveal color input, disable unavailable colors options
 shirtDesign.addEventListener('change', (e)=> {
-    shirtDesignPick = e.target.value;
+    const shirtDesignPick = e.target.value;
     shirtColor.disabled = false;
 
     for ( let i = 0; i < shirtColor.length; i++ ){
@@ -133,6 +129,7 @@ paymentOption.addEventListener('change', (e)=> {
  * @description - adds/removes hiddent attribute based on paymentType argument
  * @param {string} paymentType  - a select field of payment options
  */
+
 function paymentOptionTest(paymentType){
     if(paymentType == 'credit-card'){
         paypal.hidden = true;
@@ -162,15 +159,16 @@ form.addEventListener('submit', (e)=> {
     const isValidCreditCardNumber = regexCreditCardNumber.test(creditCardNumber.value);
     const isValidCreditCardZip = regexCreditCardZip.test(creditCardZip.value);
     const isValidCreditCardCvv = regexCreditCardCvv.test(creditCardCvv.value);
-    let isValidActivitiesCheckbox = false;
 
-    //Run setValidation function based on true/false validation test for these inputs on submit
+    //On Submit: Run setValidation function based on true/false validation test above for these inputs
     setValidation(name,isValidName) 
     setValidation(email,isValidEmail)
 
-    
-    //Activities Validation: At least one checkbox must be selected to proceed.  
-    //Note: The structure of the html won't allow me to use the setValidation function. So i've set everything separately.
+    //Activities Validation - At least one checkbox must be selected to proceed.  
+    //Note: The structure of the html won't allow the setValidation function based on .parentElement structure. Perhaps attempt to refactor later
+
+    let isValidActivitiesCheckbox = false;
+
     for(let i = 0; i < activitiesCheckbox.length; i++) {
         if(activitiesCheckbox[i].checked) {
             isValidActivitiesCheckbox = true;
@@ -187,7 +185,7 @@ form.addEventListener('submit', (e)=> {
         activitiesHint.style.display = 'block';
     }
 
-    //If credit card is selected payment option, validate the cc inputs.  Skip if not.
+    //Validate Credit Card Inputs - If credit card is selected payment option, validate the cc inputs.  Skip if not.
     //allCCValid validates credit card inputs as a group.  Start with allCCValid as true so if other non-cc options are picked it will validate
     let allCCValid = true;
 
@@ -204,11 +202,10 @@ form.addEventListener('submit', (e)=> {
     };
 });
 
-
 /**
  * @function setValidation
  * @description - sets or removes validation classes on input elements
- * @param {string} element  - input element to add class
+ * @param {HTMLElement} element  - input element to add class
  * @param {string} isValid  - true/false arugment results from Regex test() above
  */ 
 
@@ -224,12 +221,11 @@ function setValidation(element,isValid){
     }
 }
 
-
 /***********************************
 * Extra Credit
 ***********************************/
 
-//Conflicting Activity Times
+//Conflicting Activity Times - Disallow booking activites at the same time
 activities.addEventListener('change', (e)=> { 
     const selectedDayTime = e.target.dataset.dayAndTime;
 
@@ -244,7 +240,7 @@ activities.addEventListener('change', (e)=> {
     });
 });
 
-//Real-Time Error Messages
+//Real-Time Error Messages - Show validation error upon leaving the input.
 // On input blur, call setValidation func which will mark as valid or invalid upon moving to a new field. Argument 1: The html element to set.  Argument 2: Test the input against the regex validation to return and pass in a "true | false" argument.
 name.addEventListener('blur', (e)=> {
     setValidation(name,regexName.test(name.value));
@@ -267,10 +263,7 @@ creditCardCvv.addEventListener('blur', (e)=> {
 });
 
 
-//Conditional Error Message
-//Update hint to provide more detailed validation message.
-//Note: initially I combined this with the above 'Real-Time Error Messages' section but decided to separate it for evaluation purposes so it could be seen more easily.
-
+//Conditional Error Message - Update hint to provide more detailed validation message.
 
 name.addEventListener('blur', (e) => {
     if (regexName.test(name.value)) {
